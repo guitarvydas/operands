@@ -1,0 +1,40 @@
+Operand {
+Main = operand+
+operand =
+  | genericDateTime
+  | numericalValue
+
+genericDateTime =
+  | dateTimeTimeZone
+  | dateTime
+  | date
+  | time
+
+
+dateTimeTimeZone = date "-" time "-" timeZone
+dateTime = date "-" time
+date = year "-" month "-" day
+time = hours ":" minutes ":" seconds
+year = digit digit digit digit
+month = digit digit?
+day = digit digit?
+timeZone = digit digit? ":" digit digit
+hours = digit digit
+minutes = digit digit
+seconds = digit digit
+
+numericalValue =
+  | "$" digit+ "." digit digit       -- dollar
+  | "##" base64digit+                -- base64
+  | "#" base16digit+                 -- hex
+  | integer "x" integer              -- coordinate
+  | integer ".." integer             -- range
+  | integer "." integer "." integer  -- tuple
+  | integer "." integer              -- floatingpoint
+  | integer "," integer              -- eufloatingpoint
+  | integer
+
+base16digit = digit | "A" .. "F" | "a" .. "f"
+base64digit = digit | "A" .. "Z" | "a" .. "z"
+integer = digit+
+}
