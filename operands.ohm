@@ -1,8 +1,24 @@
 Operand {
 Main = operand+
 operand =
-  | genericDateTime
-  | numericalValue
+  | inputPort                 -- input
+  | outputPort                -- output
+  | self                      -- self
+  | genericDateTime           -- datetime
+  | numericalValue            -- numerical
+  | compoundOperand           -- compound
+  | keywordOperand            -- keyword
+  
+compoundOperand =
+  | "<" (~">" any)+ ">"       -- hypertext
+  | "%" symbol ("/" symbol)*  -- file
+  | symbol "://"              -- url
+  | symbol "@" symbol         -- email
+
+keywordOperand =
+  | "none" ~letter            -- none
+  | "yes" ~letter             -- yes
+  | "no"  ~letter             -- no
 
 genericDateTime =
   | dateTimeTimeZone
@@ -37,4 +53,45 @@ numericalValue =
 base16digit = digit | "A" .. "F" | "a" .. "f"
 base64digit = digit | "A" .. "Z" | "a" .. "z"
 integer = digit+
+
+string = dq (~dq any)* dq
+dq = "\""
+nestablestring =
+  | beginquote nestableStringInner endquote
+
+nestableStringInner =
+  | beginquote nestableStringInner endquote
+  | (~enquote any)*
+
+beginquote = "“"
+endquote = "”"
+
+symbol =
+  | beginbracket symbolInner endbracket
+  | ~space any
+  
+symbolInner = 
+  | beginbracket symbolInner endbracket
+  | (~endbracket any)*
+
+
+beginbracket = "❲"
+endbracket = "❳"
+
+outputPort = symbol "➤"
+inputPort = "◦" symbol
+self = š
 }
+
+
+// deal with allocation
+// local
+// parameter
+// temp
+// global? free?
+// function
+// function with 1 parameter
+// predicate
+// predicate with 1 parameter
+// action
+// action with 1 parameter
